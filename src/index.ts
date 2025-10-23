@@ -1,69 +1,76 @@
 import { SHA256 } from "crypto-js";
 
-// define the block
 class Block {
     index: number;
+    data: string;
     timestamp: Date;
-    data: string | object;
     prevHash: string;
     hash: string;
+    nonce: number;
 
-    constructor(index: number, timestamp: Date, data: string | object, prevHash = '') {
+    constructor(
+        index: number,
+        data: string,
+        timestamp: Date,
+        prevHash = "",
+        nonce: number
+    ) {
         this.index = index;
-        this.timestamp = timestamp;
         this.data = data;
+        this.timestamp = timestamp;
         this.prevHash = prevHash;
-        this.hash = this.calculateHash();
+        this.hash = this.computeHash();
+        this.nonce = nonce;
     }
 
-    calculateHash(): string {
-        return SHA256(this.index + this.prevHash + this.timestamp + JSON.stringify(this.data)).toString();
+    computeHash(): string {
+        return (SHA256(this.index + JSON.stringify(this.data).toString() + this.timestamp + this.nonce)).toString();
+    }
+
+    mineBlock(difficulty: number) {
+        while(this.hash.substring(0, difficulty) != Array(difficulty + 1).join("0")) {
+            this.nonce += 1;
+            this.hash = this.computeHash();
+        }
+        console.log(`Mining Block ${this.index}.. \n ${this.hash} \n`);
     }
 
 }
 
 class Blockchain {
-    chain: Array<Block>;
+    blockchain: Array<Block>;
     constructor() {
-        this.chain = [this.createGenesisBlock()];
+        this.blockchain = [this.createGenesisBlock()]
     }
 
-    createGenesisBlock(): Block {
-        return new Block(0, new Date(), "Genesis Block", "0");
+    createGenesisBlock() {
+        return new Block(0, "this is genesis block", new Date(), "0", 0);
     }
 
-    getLatestBlock() {
-        return this.chain[this.chain.length - 1];
+    getLatestBlock(): Block | undefined {
+        return this.blockchain[this.blockchain.length - 1];
     }
 
-    addBlock(newBlock: Block) {
-        newBlock.prevHash = (this.getLatestBlock()?.hash) as string;
-        newBlock.hash = newBlock.calculateHash();
-        // forget about consensus
-        this.chain.push(newBlock);
-    }
-
-    isChainValid(): boolean {
-        for(let i = 1; i < this.chain.length; i++) {
-            const currBlock = this.chain[i];
-
-            const prevBlock = this.chain[i - 1];
-
-            if(currBlock?.hash != currBlock?.calculateHash()) return false;
-            if(currBlock?.prevHash != prevBlock?.hash) return false;
+    addBlock(block: Block) {
+        const latestBlock = this.getLatestBlock();
+        if (latestBlock) {
+            block.prevHash = latestBlock.hash;
         }
-        return true;
+        block.mineBlock(2);
+        this.blockchain.push(block);
     }
 
+   
 }
 
-let sashiChain = new Blockchain();
-sashiChain.addBlock(new Block(1, new Date(), { amount: 4 }));
+const chain = new Blockchain();
 
-console.log(JSON.stringify(sashiChain, null, 4));
-console.log("Is blockchain valid: " + sashiChain.isChainValid());
+const b1 = new Block(chain.blockchain.length,"create a txn",new Date(), "", 0);
+chain.addBlock(b1);
 
-// can't be tampered with some data
-(sashiChain.chain[1] as Block).data = { amount: 100 };
+const b2 = new Block(chain.blockchain.length,"create a txn",new Date(), "", 0);
+chain.addBlock(b2);
 
-console.log("Is blockchain valid: " + sashiChain.isChainValid());
+// console.log(JSON.stringify(chain.getLatestBlock(), null, 3));
+
+console.log("All blocks: " + JSON.stringify(chain, null, 3));
