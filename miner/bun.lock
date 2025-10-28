@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "blockchain",
+      "name": "miner",
       "devDependencies": {
         "@types/bun": "latest",
       },

@@ -1,11 +1,7 @@
 {
-  "name": "blockchain",
-  "module": "index.ts",
+  "name": "server",
+  "module": "src/index.ts",
   "type": "module",
-  "scripts": {
-    "start": "npm run dev"
-
-  },
   "devDependencies": {
     "@types/bun": "latest"
   },
