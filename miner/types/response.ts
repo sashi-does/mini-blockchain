@@ -1,5 +1,5 @@
-import { Block } from "./block";
-import { Transaction } from "./transaction";
+
+import type { Block } from "../types/chain";
 
 export enum IType {
     WELCOME,

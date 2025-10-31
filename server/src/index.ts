@@ -1,10 +1,9 @@
 import { type ChainResponse, IType } from "../types/response";
-import { Xenit } from "./chain";
+import { chain } from "./chain";
 
-const server = Bun.serve({
+Bun.serve({
     port: 3000,
 
-    // Upgrade HTTP → WebSocket
     fetch(req, server) {
         if (server.upgrade(req)) return;
         return new Response("WebSocket Server Running");
@@ -12,19 +11,21 @@ const server = Bun.serve({
 
     websocket: {
         open(ws) {
-            
+            ws.subscribe("New Block")
             const response: ChainResponse = {
-                    type: IType.WELCOME,
-                    message: "Thank you for choosing Xenit.. Happy Mining!!",
-                    // data: Xenit.memPool(),
+                type: IType.WELCOME,
+                message: "Thank you for choosing Xenit.. Happy Mining!",
+                data: chain
             }
             console.log("Miner connected");
-            ws.send(JSON.stringify(response));
+            ws.send(JSON.stringify(response, null, 3) + "\n");
         },
 
         message(ws, message) {
             console.log("Received:", message.toString());
-            ws.send("You sent: " + message);
+            ws.send("Data sent succesfully!");
+
+            ws.publish("New Block", message);
         },
 
         close(ws) {
@@ -33,4 +34,4 @@ const server = Bun.serve({
     }
 });
 
-console.log("Bun WebSocket running at ws://localhost:3000");
+console.log("Blockchain running at 3000...");

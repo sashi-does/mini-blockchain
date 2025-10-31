@@ -1,40 +1,5 @@
-import { SHA256 } from "crypto-js";
-
-export class Transaction {
-    fromAddress: string;
-    toAddress: string;
-    amount: number;
-    constructor(fromAddress: string, toAddress: string, amount: number) {
-        this.fromAddress = fromAddress;
-        this.toAddress = toAddress;
-        this.amount = amount;
-    }
-
-    getSignature() {
-        return SHA256(this.fromAddress + this.toAddress + this.amount)
-    }
-}
-
-export class Block {
-    timestamp: Date;
-    nonce: number;
-    data: Transaction[];
-    hash: string;
-    prevHash: string;
-
-    constructor(txns: Transaction[], prevHash: string) {
-        this.timestamp = new Date();
-        this.data = txns;
-        this.nonce = 0;
-        this.hash = "0000000000";
-        this.prevHash = prevHash;
-    }
-
-    genHash(): string {
-        return SHA256(this.timestamp + JSON.stringify(this.data) + this.nonce).toString();
-    }
-}
-
+import { Block } from "../types/block";
+import { Transaction } from "../types/transaction";
 
 export class Blockchain {
     pendingTransactions: Transaction[];
@@ -44,7 +9,7 @@ export class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
-        this.difficulty = 3;
+        this.difficulty = 2;
     }
 
     getAllBlocks() {
@@ -56,48 +21,29 @@ export class Blockchain {
     }
 
     createGenesisBlock(): Block {
-        return new Block([], "");
+        const rootBlock = new Block([], "");
+        rootBlock.hash = "000000000000000";
+        return rootBlock
     }
 
     memPool(): Transaction[] {
         return this.pendingTransactions;
     }
 
-    toJSON() {
-        return {
-            chain: this.chain.map((block: Block) => ({
-                index: block.nonce,
-                timestamp: block.timestamp,
-                hash: block.hash,
-                prevHash: block.prevHash,
-                nonce: block.nonce.toString(),        // BigInt → string
-                difficulty: Number(this.difficulty), // BigInt → number
-                transactions: block.data.map((tx: Transaction) => ({
-                    from: tx.fromAddress,
-                    to: tx.toAddress,
-                    amount: Number(tx.amount),        // BigInt → number
-                    signature: tx.getSignature()
-                }))
-            })),
+    private addBlock(block: Block) {
+    // console.log("START")
+    // console.log(JSON.stringify(block))
 
-            mempool: this.memPool().map((tx: Transaction) => ({
-                from: tx.fromAddress,
-                to: tx.toAddress,
-                amount: Number(tx.amount),
-                signature: tx.getSignature()
-            }))
-        };
-    }
+    if (block.prevHash !== this.getLatestBlock().hash) return;
+    if (!this.isChainValid()) return;
+    // console.log("END")
+    this.chain.push(block);
+}
 
-
-    addBlock(block: Block) {
-        if (this.getLatestBlock().hash != block.hash) return;
-        if (!this.isChainValid()) return;
-        this.chain.push(block);
-    }
 
     mineBlock(block: Block) {
-        while (block.hash.substring(0, this.difficulty + 1) != Array(3).join("0")) {
+        block.hash = block.genHash();
+        while (block.hash.substring(0, this.difficulty) != Array(this.difficulty + 1).join("0")) {
             block.nonce += 1;
             block.hash = block.genHash();
         }
@@ -116,14 +62,26 @@ export class Blockchain {
 
 
 export const Xenit = new Blockchain();
-Xenit.createGenesisBlock();
+export const chain = Xenit.chain;
+
+// const t = [new Transaction("frm", "to", 3)];
+
+// const b = new Block(t,"jvjlhv" );
+// const latestBlock = Xenit.getLatestBlock();
+// b.prevHash = latestBlock.hash
+// Xenit.mineBlock(b);
+
+// const b2 = new Block(t, "" );
+// const latestBlock2 = Xenit.getLatestBlock();
+// b2.prevHash = latestBlock2.hash
+// Xenit.mineBlock(b2);
 
 
-const txn = new Transaction("0x1235", "0x456", 9);
-const recentBlock = Xenit.getLatestBlock();
-
-const block = new Block([txn], recentBlock.hash);
-
-Xenit.mineBlock(block);
+// console.log(JSON.stringify(Xenit.getAllBlocks(), null, 3));
 
 
+
+// console.log(Xenit.isChainValid())
+// const tamper = [new Transaction("frm", "to", 3)];
+// const bb = Xenit.chain[1];
+// console.log(Xenit.isChainValid())
