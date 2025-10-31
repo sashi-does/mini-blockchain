@@ -11,17 +11,21 @@ wss.on("open", () => {
 wss.on("message", (msg) => {
     // get the response from the chain 
     const buff = msg.toString();
-    console.log("&&&&&&&&&")
-    console.log(buff)
-    // console.log(buff);
     let response: ChainResponse = JSON.parse(buff)
-    if(response.type === IType.NEW_BLOCK) {
+    console.log(response.type === IType.WELCOME)
+    console.log(response.type === IType.NEW_BLOCK)
+
+
+    if(response.type === IType.WELCOME) {
         let currentChain: Block[] = response.data as Block[]
         for(let b of currentChain) {
             console.log(b.timestamp)
         }
-    } else if(response.type === IType.WELCOME) {
+    } else if(response.type === IType.NEW_BLOCK) {
         console.log(JSON.stringify(response.data, null, 3))
+    } else {
+        console.log(response)
+        console.log("Incorrect")
     }
     
 })
