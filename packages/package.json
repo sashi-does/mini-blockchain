@@ -1,0 +1,21 @@
+{
+  "name": "core",
+  "module": "./src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "crypto-js": "^4.2.0"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./block": "./src/block.ts",
+    "./blockchain": "./src/blockchain.ts",
+    "./transaction": "./src/transaction.ts"
+  }
+}

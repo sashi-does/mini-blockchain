@@ -1,5 +1,5 @@
-import { Block } from "../types/block";
-import { Transaction } from "../types/transaction";
+import { Block } from "./block";
+import { Transaction } from "./transaction";
 
 export class Blockchain {
     pendingTransactions: Transaction[];
@@ -20,6 +20,19 @@ export class Blockchain {
         return this.chain[this.chain.length - 1] as Block;
     }
 
+    isValidBlock(block: Block): Boolean {
+        if(block.hash != block.genHash()) return false;
+        if(this.getLatestBlock().hash != block.prevHash) return false;
+        if(!this.isTxnsValid(block)) return false;
+        return true;
+    }
+
+    isTxnsValid(block: Block): Boolean {
+        const txns = block.txns;
+        // logic to verify all the transactions
+        return true;
+    }
+
     createGenesisBlock(): Block {
         const rootBlock = new Block([], "");
         rootBlock.hash = "000000000000000";
@@ -31,14 +44,10 @@ export class Blockchain {
     }
 
     private addBlock(block: Block) {
-    // console.log("START")
-    // console.log(JSON.stringify(block))
-
-    if (block.prevHash !== this.getLatestBlock().hash) return;
-    if (!this.isChainValid()) return;
-    // console.log("END")
-    this.chain.push(block);
-}
+        if (block.prevHash !== this.getLatestBlock().hash) return;
+        if (!this.isChainValid()) return;
+        this.chain.push(block);
+    }
 
 
     mineBlock(block: Block) {
@@ -61,8 +70,8 @@ export class Blockchain {
 }
 
 
-export const Xenit = new Blockchain();
-export const chain = Xenit.chain;
+// export const Xenit = new Blockchain();
+// export const chain = Xenit.chain;
 
 // const t = [new Transaction("frm", "to", 3)];
 
