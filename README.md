@@ -1,4 +1,4 @@
-# Mini Blockchain Implementation 🔗
+# Mini Blockchain Implementation
 
 > A TypeScript-based blockchain implementation with mining capabilities and WebSocket-powered peer-to-peer communication built with Bun runtime.
 
