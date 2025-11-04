@@ -132,10 +132,16 @@ ws://localhost:<PORT>
 ```
 
 ### Message Types
-- **NEW_BLOCK** - Broadcast newly mined blocks
-- **NEW_TRANSACTION** - Propagate new transactions
-- **GET_CHAIN** - Request the current blockchain
-- **SYNC_CHAIN** - Synchronize with peer chains
+- **WELCOME** – Sent when a new node or miner connects to the network  
+- **BLOCK_ACCEPTED** – Indicates a mined block has been accepted by a miner  
+- **BLOCK_REJECTED** – Indicates a mined block has been rejected by a miner 
+- **NEW_BLOCK** – Broadcast newly mined blocks  
+- **INVALID_MINER_ADDRESS** – Sent when a miner’s address is invalid  
+- **INVALID_TXNS** – Notifies about invalid transactions in a proposed block  
+- **VALID_TXNS** – Confirms transactions are valid and ready for inclusion  
+- **BLOCK_FINALIZED** – Confirms that a block has been added to the main chain after consensus 
+- **BLOCK_DISCARDED** – Indicates a block was dropped or replaced due to fork resolution after consensus
+- **CHAIN_UPDATE** – Broadcasts when a node’s blockchain is updated  
 
 ###️ Core Components
 
