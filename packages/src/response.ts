@@ -27,7 +27,7 @@ export interface ChainResponse {
 export interface MinerResponse {
     type: IType;
     message: String;
-    hash?: String;
+    data?: String;
 }
 
 export enum Event {

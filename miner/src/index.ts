@@ -15,26 +15,48 @@ wss.on("open", () => {
 
 wss.on("message", (msg) => {
     // get the response from the chain 
-    const buff = msg.toString();
-    let response: ChainResponse = JSON.parse(buff)
+    const buff = msg.toString("utf8");
 
+    let response: ChainResponse = JSON.parse(buff)
+    // let response: ChainResponse = JSON.parse(buff)
+
+    console.log(response.type)
     if(response.type === IType.WELCOME) {
+        console.log("gotcha")
         currentChain = response.data as Block[];
         const getLatestBlockHash = blockchain.getLatestBlock().hash;
         // Five Transactions is MAX ( for a block )
         const txns = getLatestTransactions();
+
+        // Start mining the block
         const block = new Block(txns, getLatestBlockHash);
+        const miningResult = blockchain.mineBlock(block, "miner_address");
+        
+        if(miningResult == IType.INVALID_MINER_ADDRESS) {
+            console.log("Invalid Miner Address")
+            return;
+        }
+        if(miningResult == IType.INVALID_TXNS) {
+            console.log("Invalid Transactions");
+            return;
+        }
+        const message = {
+            type: IType.NEW_BLOCK,
+            message: `New Block: ${block.hash}`,
+            data: block
+        }
+        wss.send(JSON.stringify(message));
+
     }
         
     else if(response.type === IType.NEW_BLOCK) {
         let message: MinerResponse;
         try {
-            const newBlock: Block = JSON.parse(JSON.stringify(response.data));
-            const hash: string = blockchain.mineBlock(newBlock, wallet.getPublic("hex"));
+            
             message = {
                 type: IType.BLOCK_ACCEPTED,
-                message: `Block is mined successfully: ${hash}`,
-                hash
+                message: `Block is mined successfully: ${response.data}`,
+                data: JSON.stringify(response.data)
             };
             wss.send(JSON.stringify(message));
 
@@ -49,7 +71,7 @@ wss.on("message", (msg) => {
 
     } else {
         console.log(response)
-        console.log("Incorrect")
+        // console.log("Incorrect")
     }
     
 })

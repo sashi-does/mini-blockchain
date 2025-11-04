@@ -1,8 +1,8 @@
 import { consensus, processConsensus } from "./consensus";
 import { Event } from "../../packages/src/response";
 import { type ChainResponse, IType } from "../../packages/src/response";
-import type { Block } from "../../packages/src/block";
-import { Xenit } from "./socket";
+import { Block } from "../../packages/src/block";
+import { setSocket, Xenit } from "./socket";
 import genId, { miners } from "./miners";
 
 Bun.serve({
@@ -17,6 +17,7 @@ Bun.serve({
     websocket: {
         open(ws) {
             // Add Miner to the Record
+            setSocket(ws);
             const id = genId();
             (ws as any).id = id;
             miners[`MINER_${id}`] = {
@@ -37,11 +38,10 @@ Bun.serve({
         },
 
         message(ws, message) {
-            console.log("Received:", message.toString());
-            ws.send("Data sent succesfully!");
-            const response: ChainResponse = JSON.parse(message.toString());
+            // const response: ChainResponse = JSON.parse(JSON.stringify(message.toString("utf-8")));
+            const response: ChainResponse = JSON.parse(message.toString("utf-8"));
             const block = response.data as Block
-
+            
             // New Block Proposal
             if (response.type === IType.NEW_BLOCK) {
                 consensus[block.hash] = { accepted: 0, rejected: 0 };

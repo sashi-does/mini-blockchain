@@ -24,6 +24,10 @@ export class Transaction {
         if(this.toAddress == null) return false;
         if(!this.signature || this.signature.length == 0) return false;
         const pubKey = EC.keyFromPublic(this.fromAddress, "hex");
+        console.log("((())++++)")
+        const res = pubKey.verify(this.hash, this.signature);
+        console.log(res)
+
         return pubKey.verify(this.hash, this.signature);
     }
 

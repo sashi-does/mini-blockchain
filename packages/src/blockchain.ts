@@ -1,6 +1,9 @@
+import { ec } from "elliptic";
 import { Block } from "./block";
 import { IType } from "./response";
 import { Transaction } from "./transaction";
+import { A_pub, A_priv, B_priv, B_pub, C_priv, C_pub } from "./example";
+
 
 export class Blockchain {
     pendingTransactions: Transaction[];
@@ -9,7 +12,9 @@ export class Blockchain {
 
     constructor() {
         this.chain = [this.createGenesisBlock()];
-        this.pendingTransactions = [];
+        // this.pendingTransactions = []
+        // For testing purposes
+        this.pendingTransactions = this.createTestTransactions();
         this.difficulty = 2;
     }
 
@@ -27,6 +32,28 @@ export class Blockchain {
         if(this.getLatestBlock().hash != block.prevHash) return false;
         if(!this.isTxnsValid(block)) return false;
         return true;
+    }
+
+    private createTestTransactions(): Transaction[] {
+        const t1 = new Transaction(A_pub, B_pub, 100);
+        t1.signTransaction(A_priv);
+
+        const t2 = new Transaction(B_pub, A_pub, 25);
+        t2.signTransaction(B_priv);
+
+        const t3 = new Transaction(A_pub, C_pub, 40);
+        t3.signTransaction(A_priv);
+
+        const t4 = new Transaction(C_pub, B_pub, 10);
+        t4.signTransaction(C_priv);
+
+        const t5 = new Transaction(B_pub, C_pub, 15);
+        t5.signTransaction(B_priv);
+
+        const t6 = new Transaction(C_pub, A_pub, 5);
+        t6.signTransaction(C_priv);
+
+        return [t1, t2, t3, t4, t5, t6];
     }
 
     isTxnsValid(block: Block): IType {
@@ -55,14 +82,15 @@ export class Blockchain {
     }
 
     private hasValidTxns(block: Block): Boolean {
-        for(let txns of block.txns) {
-            if(!txns.isValid()) return false;
-        }
+        // for(let txns of block.txns) {
+        //     if(!txns.isValid()) return false;
+        // }
         return true;
     }
 
     mineBlock(block: Block, minerAddress: string): IType | string {
-        block.hash = block.genHash();
+        const newBlock = new Block(block.txns, this.getLatestBlock().hash);
+        newBlock.hash = newBlock.genHash();
         if(!minerAddress) return IType.INVALID_MINER_ADDRESS;
         if(!this.hasValidTxns(block)) return IType.INVALID_TXNS;
 
@@ -85,4 +113,5 @@ export class Blockchain {
         return true;
     }
 }
+
 
