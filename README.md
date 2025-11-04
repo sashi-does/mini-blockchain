@@ -1,8 +1,10 @@
-# Mini Blockchain Implementation
+# Mini Blockchain Implementation 🔗
 
-A TypeScript-based blockchain implementation with mining capabilities and WebSocket-powered peer-to-peer communication built with Bun runtime.
+> A TypeScript-based blockchain implementation with mining capabilities and WebSocket-powered peer-to-peer communication built with Bun runtime.
 
-## 🚀 Features
+[![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=fff)](https://bun.sh)  [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)  [![WebSocket](https://img.shields.io/badge/WebSocket-010101?logo=socketdotio&logoColor=fff)](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
+
+## Features
 
 - **Complete Blockchain Core** - Block creation, validation, and chain management
 - **Proof-of-Work Mining** - CPU-based mining with difficulty adjustment
@@ -12,7 +14,7 @@ A TypeScript-based blockchain implementation with mining capabilities and WebSoc
 - **Wallet Management** - Manage blockchain wallets and addresses
 - **Bun Runtime** - Fast JavaScript runtime for optimal performance
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 ├── miner/              # Mining node implementation
@@ -48,20 +50,20 @@ A TypeScript-based blockchain implementation with mining capabilities and WebSoc
 └── tsconfig.json       # Root TypeScript config
 ```
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Runtime:** [Bun](https://bun.sh) - Fast all-in-one JavaScript runtime
 - **Language:** TypeScript
 - **Communication:** WebSockets for real-time P2P networking
 - **Package Manager:** Bun (npm-compatible)
 
-## 📋 Prerequisites
+## Prerequisites
 
 - [Bun](https://bun.sh) installed on your system
 - Basic understanding of blockchain concepts
 - Node.js (optional, for compatibility)
 
-## 🔧 Installation
+## Installation
 
 1. Clone the repository:
 ```bash
@@ -81,7 +83,7 @@ cd packages && bun install && cd ..
 cd server && bun install && cd ..
 ```
 
-## 🚦 Usage
+## Usage
 
 ### Starting the Server
 
@@ -120,7 +122,7 @@ blockchain.addTransaction(transaction);
 const newBlock = blockchain.mineBlock(wallet.address);
 ```
 
-## 🔌 WebSocket API
+## WebSocket API
 
 The server exposes WebSocket endpoints for peer communication:
 
@@ -135,7 +137,7 @@ ws://localhost:<PORT>
 - **GET_CHAIN** - Request the current blockchain
 - **SYNC_CHAIN** - Synchronize with peer chains
 
-## 🏗️ Core Components
+###️ Core Components
 
 ### Block Structure
 Each block contains:
@@ -178,14 +180,14 @@ Proof-of-Work implementation:
 - Difficulty target
 - Block reward system
 
-## 🔐 Security Features
+## Security Features
 
 - **Cryptographic Hashing** - SHA-256 for block integrity
 - **Digital Signatures** - Transaction authentication
 - **Proof-of-Work** - Network security through computational difficulty
 - **Chain Validation** - Continuous verification of blockchain integrity
 
-## 🧪 Development
+## Development
 
 ### Running Examples
 
@@ -213,23 +215,23 @@ cd server && bun run build
 cd miner && bun run build
 ```
 
-## 📝 Configuration
+## Configuration
 
 Configuration files are managed through `tsconfig.json` in each package. Adjust settings as needed for your environment.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit issues or pull requests.
 
-## 📄 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 🔗 Resources
+## Resources
 
 - [Bun Documentation](https://bun.sh/docs)
-- [WebSocket Protocol](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
-- [Blockchain Basics](https://en.wikipedia.org/wiki/Blockchain)
+- [WebSocket Protocol](https://bun.com/docs/runtime/http/websockets)
+- [Blockchain Basics](https://bitcoin.org/bitcoin.pdf)
 
 ## 📧 Contact
 
