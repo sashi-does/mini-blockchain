@@ -1,36 +1,240 @@
-# 🪙 Bitcoin-Sim — A Mini Bitcoin Blockchain Network (Built with Bun + WebSockets)
+# Mini Blockchain Implementation
 
-A lightweight **Bitcoin simulation** built fully with **Bun**, **TypeScript**, and **WebSockets**.  
-It demonstrates how miners, transactions, and consensus work — in real time.
+A TypeScript-based blockchain implementation with mining capabilities and WebSocket-powered peer-to-peer communication built with Bun runtime.
 
----
+## 🚀 Features
 
-## 🚀 Overview
+- **Complete Blockchain Core** - Block creation, validation, and chain management
+- **Proof-of-Work Mining** - CPU-based mining with difficulty adjustment
+- **WebSocket P2P Network** - Real-time peer communication using WebSockets
+- **Consensus Mechanism** - Distributed consensus for chain synchronization
+- **Transaction System** - Create and validate transactions
+- **Wallet Management** - Manage blockchain wallets and addresses
+- **Bun Runtime** - Fast JavaScript runtime for optimal performance
 
-This simulation includes:
+## 📦 Project Structure
 
-- 🌐 A **WebSocket server** that relays messages between all miners  
-- ⛏️ Multiple **miner nodes** that pick pending transactions and mine blocks  
-- 💰 A **mempool** that stores unconfirmed transactions  
-- 🔒 **Proof-of-Work** algorithm for mining  
-- ⚖️ **Longest Chain Rule** for consensus  
-- 🔑 **Wallet system** using elliptic key pairs
+```
+├── miner/              # Mining node implementation
+│   ├── src/
+│   │   ├── helper.ts   # Mining utility functions
+│   │   └── index.ts    # Miner entry point
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── packages/           # Core blockchain logic
+│   ├── src/
+│   │   ├── block.ts        # Block structure and validation
+│   │   ├── blockchain.ts   # Blockchain management
+│   │   ├── example.ts      # Usage examples
+│   │   ├── response.ts     # API response types
+│   │   ├── transaction.ts  # Transaction handling
+│   │   └── wallet.ts       # Wallet functionality
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── server/             # WebSocket server and consensus
+│   ├── src/
+│   │   ├── consensus.ts    # Consensus algorithm
+│   │   ├── example.ts      # Server examples
+│   │   ├── index.ts        # Main server entry
+│   │   ├── miners.ts       # Miner management
+│   │   └── socket.ts       # WebSocket implementation
+│   ├── types/              # TypeScript type definitions
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── package.json        # Root package configuration
+└── tsconfig.json       # Root TypeScript config
+```
 
----
+## 🛠️ Tech Stack
 
-## 🧱 Project Structure
+- **Runtime:** [Bun](https://bun.sh) - Fast all-in-one JavaScript runtime
+- **Language:** TypeScript
+- **Communication:** WebSockets for real-time P2P networking
+- **Package Manager:** Bun (npm-compatible)
+
+## 📋 Prerequisites
+
+- [Bun](https://bun.sh) installed on your system
+- Basic understanding of blockchain concepts
+- Node.js (optional, for compatibility)
+
+## 🔧 Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd mini-blockchain
+```
+
+2. Install dependencies:
+```bash
+bun install
+```
+
+3. Install dependencies for each package:
+```bash
+cd miner && bun install && cd ..
+cd packages && bun install && cd ..
+cd server && bun install && cd ..
+```
+
+## 🚦 Usage
+
+### Starting the Server
+
+The server handles WebSocket connections and manages the blockchain consensus:
 
 ```bash
-bitcoin-sim/
-│
-├── server/
-│   ├── index.ts          # WebSocket central server
-│   └── mempool.ts        # In-memory transaction pool
-│
-├── miner/
-│   ├── miner.ts          # Miner process
-│   ├── blockchain.ts     # Blockchain + consensus
-│   ├── transaction.ts    # Transaction structure
-│   └── wallet.ts         # Wallet + signing
-│
-└── README.md
+cd server
+bun run src/index.ts
+```
+
+### Running a Miner
+
+Start mining blocks and contributing to the blockchain:
+
+```bash
+cd miner
+bun run src/index.ts
+```
+
+### Using the Core Package
+
+```typescript
+import { Blockchain, Block, Transaction, Wallet } from './packages/src';
+
+// Create a new blockchain
+const blockchain = new Blockchain();
+
+// Create a wallet
+const wallet = new Wallet();
+
+// Create and add transactions
+const transaction = new Transaction(sender, recipient, amount);
+blockchain.addTransaction(transaction);
+
+// Mine a new block
+const newBlock = blockchain.mineBlock(wallet.address);
+```
+
+## 🔌 WebSocket API
+
+The server exposes WebSocket endpoints for peer communication:
+
+### Connection
+```
+ws://localhost:<PORT>
+```
+
+### Message Types
+- **NEW_BLOCK** - Broadcast newly mined blocks
+- **NEW_TRANSACTION** - Propagate new transactions
+- **GET_CHAIN** - Request the current blockchain
+- **SYNC_CHAIN** - Synchronize with peer chains
+
+## 🏗️ Core Components
+
+### Block Structure
+Each block contains:
+- Index
+- Timestamp
+- Transactions
+- Previous hash
+- Hash
+- Nonce (for Proof-of-Work)
+- Difficulty
+
+### Blockchain
+Manages the chain of blocks with:
+- Block validation
+- Chain validation
+- Difficulty adjustment
+- Transaction pool management
+
+### Transaction
+Handles transfer of value between addresses with:
+- Digital signatures
+- Transaction validation
+- Input/output management
+
+### Wallet
+Manages user credentials:
+- Public/private key pairs
+- Address generation
+- Transaction signing
+
+### Consensus
+Implements the longest chain rule:
+- Chain synchronization
+- Conflict resolution
+- Network agreement
+
+### Mining
+Proof-of-Work implementation:
+- Hash computation
+- Difficulty target
+- Block reward system
+
+## 🔐 Security Features
+
+- **Cryptographic Hashing** - SHA-256 for block integrity
+- **Digital Signatures** - Transaction authentication
+- **Proof-of-Work** - Network security through computational difficulty
+- **Chain Validation** - Continuous verification of blockchain integrity
+
+## 🧪 Development
+
+### Running Examples
+
+Each package includes example files demonstrating functionality:
+
+```bash
+# Blockchain examples
+cd packages
+bun run src/example.ts
+
+# Server examples
+cd server
+bun run src/example.ts
+```
+
+### Building
+
+```bash
+# Build all packages
+bun run build
+
+# Or build individually
+cd packages && bun run build
+cd server && bun run build
+cd miner && bun run build
+```
+
+## 📝 Configuration
+
+Configuration files are managed through `tsconfig.json` in each package. Adjust settings as needed for your environment.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🔗 Resources
+
+- [Bun Documentation](https://bun.sh/docs)
+- [WebSocket Protocol](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
+- [Blockchain Basics](https://en.wikipedia.org/wiki/Blockchain)
+
+## 📧 Contact
+
+For questions or support, please open an issue in the repository.
+
+---
+
+Built with ⚡ Bun and 🔗 WebSockets
