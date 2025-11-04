@@ -1,22 +1,23 @@
 import type { Block } from "../../packages/src/block";
 import { Event } from "../../packages/src/response";
 import { IType } from "../../packages/src/response";
+import { miners } from "./miners";
 import { socket, Xenit } from "./socket";
 
 export const consensus: Record<string, { accepted: number, rejected: number }> = {}
 
-export function processConsesnus(block: Block) {
+export function processConsensus(block: Block) {
     const entry = consensus[block.hash];
     if(!entry) return;
     const totalVotes = entry.accepted + entry.rejected;
-    const threshold = Math.floor(totalVotes * 0.6);
+    const threshold = Math.floor(Object.keys(miners).length * 0.51);
 
     if (totalVotes < threshold) return;
-    if (entry.accepted > totalVotes / 2) {
+    if (entry.accepted >= threshold) {
         finaliseBlock(block);
         return;
     }
-    if(entry.rejected > totalVotes / 2 ) {
+    if(entry.rejected >= threshold ) {
         discardBlock(block);
         return;
     }

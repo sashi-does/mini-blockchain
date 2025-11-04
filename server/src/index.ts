@@ -1,4 +1,4 @@
-import { consensus, processConsesnus } from "./consensus";
+import { consensus, processConsensus } from "./consensus";
 import { Event } from "../../packages/src/response";
 import { type ChainResponse, IType } from "../../packages/src/response";
 import type { Block } from "../../packages/src/block";
@@ -24,6 +24,7 @@ Bun.serve({
                 ws,
                 connectedAt: new Date(),
             };
+            console.log(miners);
             const response: ChainResponse = {
                 type: IType.WELCOME,
                 message: "Thank you for choosing Xenit.. Happy Mining!",
@@ -56,17 +57,15 @@ Bun.serve({
                 const entry = consensus[key];
                 if (response.type === IType.BLOCK_ACCEPTED) {
                     entry.accepted++;
-                    processConsesnus(block);
+                    processConsensus(block);
                 }
                 else {
                     entry.rejected++;
-                    processConsesnus(block);
+                    processConsensus(block);
                 }
                 
-
-                // Broadcast to all miners
-                ws.publish(Event.XENIT_EVENT_0_0_1, "");
             }
+            
 
         },
 

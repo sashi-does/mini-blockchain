@@ -1,4 +1,5 @@
 import { Block } from "./block";
+import { IType } from "./response";
 import { Transaction } from "./transaction";
 
 export class Blockchain {
@@ -22,15 +23,19 @@ export class Blockchain {
 
     isValidBlock(block: Block): Boolean {
         if(block.hash != block.genHash()) return false;
+        if(block.hash.substring(0, this.difficulty) != Array(this.difficulty + 1).join("0")) return false;
         if(this.getLatestBlock().hash != block.prevHash) return false;
         if(!this.isTxnsValid(block)) return false;
         return true;
     }
 
-    isTxnsValid(block: Block): Boolean {
+    isTxnsValid(block: Block): IType {
         const txns = block.txns;
+        for(let txn of block.txns) {
+            if(!txn.isValid()) return IType.INVALID_TXNS;
+        }
         // logic to verify all the transactions
-        return true;
+        return IType.VALID_TXNS;
     }
 
     createGenesisBlock(): Block {
@@ -49,14 +54,26 @@ export class Blockchain {
         this.chain.push(block);
     }
 
+    private hasValidTxns(block: Block): Boolean {
+        for(let txns of block.txns) {
+            if(!txns.isValid()) return false;
+        }
+        return true;
+    }
 
-    mineBlock(block: Block) {
+    mineBlock(block: Block, minerAddress: string): IType | string {
         block.hash = block.genHash();
+        if(!minerAddress) return IType.INVALID_MINER_ADDRESS;
+        if(!this.hasValidTxns(block)) return IType.INVALID_TXNS;
+
         while (block.hash.substring(0, this.difficulty) != Array(this.difficulty + 1).join("0")) {
             block.nonce += 1;
             block.hash = block.genHash();
         }
+
         this.addBlock(block);
+        this.pendingTransactions.splice(0, block.txns.length);
+        this.pendingTransactions.push(new Transaction("", minerAddress, 100));
         return block.hash;
     }
 
@@ -69,28 +86,3 @@ export class Blockchain {
     }
 }
 
-
-// export const Xenit = new Blockchain();
-// export const chain = Xenit.chain;
-
-// const t = [new Transaction("frm", "to", 3)];
-
-// const b = new Block(t,"jvjlhv" );
-// const latestBlock = Xenit.getLatestBlock();
-// b.prevHash = latestBlock.hash
-// Xenit.mineBlock(b);
-
-// const b2 = new Block(t, "" );
-// const latestBlock2 = Xenit.getLatestBlock();
-// b2.prevHash = latestBlock2.hash
-// Xenit.mineBlock(b2);
-
-
-// console.log(JSON.stringify(Xenit.getAllBlocks(), null, 3));
-
-
-
-// console.log(Xenit.isChainValid())
-// const tamper = [new Transaction("frm", "to", 3)];
-// const bb = Xenit.chain[1];
-// console.log(Xenit.isChainValid())
