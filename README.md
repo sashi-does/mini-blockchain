@@ -143,7 +143,7 @@ ws://localhost:<PORT>
 - **BLOCK_DISCARDED** – Indicates a block was dropped or replaced due to fork resolution after consensus
 - **CHAIN_UPDATE** – Broadcasts when a node’s blockchain is updated  
 
-###️ Core Components
+### Core Components
 
 ### Block Structure
 Each block contains:
