@@ -11,6 +11,7 @@ export function processConsensus(block: Block) {
     if(!entry) return;
     const totalVotes = entry.accepted + entry.rejected;
     const threshold = Math.floor(Object.keys(miners).length * 0.51);
+    console.log( "***************" + block.hash + "***************")
 
     if (totalVotes < threshold) return;
     if (entry.accepted >= threshold) {
@@ -28,9 +29,10 @@ function finaliseBlock(block: Block) {
     const message = {
         type: IType.BLOCK_FINALIZED,
         message: `New Block Added: ${block.hash}`,
-        data: Xenit.chain
+        data: block
     }
-    socket.publish(Event.XENIT_EVENT_0_0_1, JSON.stringify(message));
+    console.log(Xenit.chain)
+    socket.publish(Event.XENIT_EVENT_0_0_1, JSON.stringify(message, null, 3));
     delete consensus[block.hash];
 }
 

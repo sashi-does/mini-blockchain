@@ -62,7 +62,7 @@ export class Blockchain {
             if(!txn.isValid()) return IType.INVALID_TXNS;
         }
         // logic to verify all the transactions
-        return IType.VALID_TXNS;
+        return IType.VALID_TXNS;               
     }
 
     createGenesisBlock(): Block {

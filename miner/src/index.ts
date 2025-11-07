@@ -1,7 +1,6 @@
 import { WebSocket } from "ws";
 import { IType, type ChainResponse, type MinerResponse } from "../../packages/src/response"
 import { Block } from "../../packages/src/block"
-import { wallet } from "../../packages/src/wallet";
 import { blockchain, getLatestTransactions } from "./helper";
 
 
@@ -15,14 +14,13 @@ wss.on("open", () => {
 
 wss.on("message", (msg) => {
     // get the response from the chain 
-    const buff = msg.toString("utf8");
-
-    let response: ChainResponse = JSON.parse(buff)
+    let response: ChainResponse = JSON.parse(msg.toString("utf-8"));
+    console.log(response)
+    
     // let response: ChainResponse = JSON.parse(buff)
 
     console.log(response.type)
     if(response.type === IType.WELCOME) {
-        console.log("gotcha")
         currentChain = response.data as Block[];
         const getLatestBlockHash = blockchain.getLatestBlock().hash;
         // Five Transactions is MAX ( for a block )
@@ -45,6 +43,7 @@ wss.on("message", (msg) => {
             message: `New Block: ${block.hash}`,
             data: block
         }
+        console.log(JSON.stringify(block, null, 3) + " *&*&*&*")
         wss.send(JSON.stringify(message));
 
     }
@@ -52,11 +51,10 @@ wss.on("message", (msg) => {
     else if(response.type === IType.NEW_BLOCK) {
         let message: MinerResponse;
         try {
-            
             message = {
                 type: IType.BLOCK_ACCEPTED,
                 message: `Block is mined successfully: ${response.data}`,
-                data: JSON.stringify(response.data)
+                data: response.data
             };
             wss.send(JSON.stringify(message));
 
@@ -69,9 +67,15 @@ wss.on("message", (msg) => {
         }
 
 
-    } else {
+    } else if(response.type == IType.BLOCK_FINALIZED) {
+        const newBlock: Block = response.data as Block
+        console.log(newBlock)
+        currentChain.push(newBlock)
+        console.log(JSON.stringify(currentChain, null, 3))
+    }
+    else {
         console.log(response)
-        // console.log("Incorrect")
+        console.log("Incorrect ra reeee")
     }
     
 })

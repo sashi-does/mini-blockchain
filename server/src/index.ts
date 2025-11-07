@@ -40,18 +40,30 @@ Bun.serve({
         message(ws, message) {
             // const response: ChainResponse = JSON.parse(JSON.stringify(message.toString("utf-8")));
             const response: ChainResponse = JSON.parse(message.toString("utf-8"));
-            const block = response.data as Block
+            console.log(response)
+            const block = JSON.parse(JSON.stringify(response.data))
             
             // New Block Proposal
             if (response.type === IType.NEW_BLOCK) {
                 consensus[block.hash] = { accepted: 0, rejected: 0 };
                 // Broadcast the new block to all miners to verify the block
-                ws.publish(Event.XENIT_EVENT_0_0_1, message);
+                console.log(block)
+                const publishMessage = {
+                    type: IType.NEW_BLOCK,
+                    message: "New Block Proposal",
+                    data: block
+                }
+                console.log(publishMessage)
+                ws.publish(Event.XENIT_EVENT_0_0_1, JSON.stringify(publishMessage));
             }
             // Block status by the Miner
             else if (response.type == IType.BLOCK_ACCEPTED || response.type == IType.BLOCK_REJECTED) {
 
                 const key = block.hash;
+                if(!key) {
+                    console.log("Block is not defined")
+                    return;
+                }
                 if(!consensus[key]) 
                     consensus[key] = { accepted: 0, rejected: 0 };
                 const entry = consensus[key];
